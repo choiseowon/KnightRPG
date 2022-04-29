@@ -11,7 +11,6 @@ public class Charactor : MonoBehaviour
     protected float[] hp_Max = new float[18];
     protected float[] att_Point = new float[18];
     protected float att_Speed = 1.0f;
-    protected float move_Speed = 0.02f;
 
     public GameObject cha_Model = null;
     public Animator cha_Anim = null;

@@ -40,7 +40,7 @@ public class UserInfo_Ctrl : MonoBehaviour
 
         speedPoint_Txt.text = (1.0f * GlobalData.speed_Value) + "\n" + "1" + "\n" + (GlobalData.speed_Value - 1) * 100 + "%";
 
-        movePoint_Txt.text = (0.02f * GlobalData.move_Value) + "\n" + "0.02" + "\n" + (GlobalData.move_Value - 1) * 100 + "%";
+        movePoint_Txt.text = (2.5f * GlobalData.move_Value) + "\n" + "2.5" + "\n" + (GlobalData.move_Value - 1) * 100 + "%";
 
         goldPoint_Txt.text = GlobalData.MymoneyToString(gold_Point) + "\n" + GlobalData.MymoneyToString(chest_Point) + "\n" +
                               GlobalData.MymoneyToString(boss_Point) + "\n" + (GlobalData.gold_Value - 1) * 100 + "%";

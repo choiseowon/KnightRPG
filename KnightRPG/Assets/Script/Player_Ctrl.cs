@@ -11,11 +11,14 @@ public class Player_Ctrl : Charactor, ISerch, IMove, IAttack, IHitDamage, IDeath
     // IAttack - 공격을 위한 인터페이스, IHitDamage - 피해를 받는 인터페이스
     // IDeath - 캐릭터 사망처리를 위한 인터페이스, IRecover - 캐릭터 부활을 위한 인터페이스
     public static Player_Ctrl Inst = null;
+    float move_Speed = 2.5f;
 
     public Transform boss_Pos = null;
     public Transform main_Pos = null;
     public GameObject camera_Obj = null;
     bool boss_Challenge = false;
+
+    Vector3 save_Pos = Vector3.zero;
 
     void Awake()
     {
@@ -90,7 +93,8 @@ public class Player_Ctrl : Charactor, ISerch, IMove, IAttack, IHitDamage, IDeath
         float speed = 1.0f * GlobalData.speed_Value;
         cha_Anim.SetFloat("attSpeed", speed);
 
-        move_Speed = 0.02f * GlobalData.move_Value;
+        move_Speed = 2.5f * GlobalData.move_Value;
+        navMeshAgent.speed = move_Speed;
         cha_Anim.SetFloat("moveSpeed", move_Speed);
 
         cha_Ui.HpUpdate(hp_Max, hp_Now);
@@ -149,14 +153,16 @@ public class Player_Ctrl : Charactor, ISerch, IMove, IAttack, IHitDamage, IDeath
 
         if (dis > 2.0f)
         {
-            this.transform.position =
-                Vector3.MoveTowards(this.transform.position, target_Tr.position, this.move_Speed);
+            navMeshAgent.SetDestination(target_Tr.position);
+            //this.transform.position =
+            //    Vector3.MoveTowards(this.transform.position, target_Tr.position, this.move_Speed);
 
             cha_Anim.SetBool("serch", true);
             this.cha_Model.transform.LookAt(target_Tr);
         }
         else
         {
+            navMeshAgent.ResetPath();
             cha_Anim.SetBool("serch", false);
             chaMode = ChaMode.Attack;
         }
@@ -227,7 +233,7 @@ public class Player_Ctrl : Charactor, ISerch, IMove, IAttack, IHitDamage, IDeath
             target_Bool = target_Hit.HitDamage(critical_Point, new Color(255, 255, 0));     
             // 치명타 수치와 치명타 표시를 위한 색상(노란색) 을 매개변수로 HitDamage 함수 호출
         else
-            target_Bool = target_Hit.HitDamage(att_Point, new Color(255, 0, 0));
+            target_Bool = target_Hit.HitDamage(att_Point, new Color(255, 255, 255));
             // 공격력 수치와 기본 색상(빨간색)을 매개변수로 HitDamage 함수 호출
 
         if (target_Bool == true)    // 타겟이 사망했을 경우
@@ -265,6 +271,7 @@ public class Player_Ctrl : Charactor, ISerch, IMove, IAttack, IHitDamage, IDeath
                 attack_Co = null;
             }
 
+            navMeshAgent.ResetPath();
             chaMode = ChaMode.Death;
             cha_Anim.SetTrigger("death");
             target_Tr = null;

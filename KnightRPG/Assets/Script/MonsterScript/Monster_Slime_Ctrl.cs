@@ -58,9 +58,9 @@ public class Monster_Slime_Ctrl : Charactor, IMonster, ISerch, IMove, IAttack, I
         att_Point = StateSetting(att_Point, 2, 1.6f, GlobalData.user_BossNowLv);
         hp_Max = StateSetting(hp_Max, 100, 2, GlobalData.user_BossNowLv);
         gold_Point = StateSetting(gold_Point, (100 * GlobalData.gold_Value), 2, GlobalData.user_BossNowLv);
-
-        for (int ii = 0; ii < hp_Max.Length; ii++)  // 설정된 최대 체력과 현재 체력을 같은 값으로 설정
-            this.hp_Now[ii] = hp_Max[ii];   // 배열을 그대로 대입하면 같은 배열로 인식함으로 인덱스 하나마다 대입
+        hp_Now = (float[])hp_Max.Clone();
+        //for (int ii = 0; ii < hp_Max.Length; ii++)  // 설정된 최대 체력과 현재 체력을 같은 값으로 설정
+        //    this.hp_Now[ii] = hp_Max[ii];   // 배열을 그대로 대입하면 같은 배열로 인식함으로 인덱스 하나마다 대입
 
         cha_Ui.HpUpdate(hp_Max, hp_Now);    // 체력바 이미지 비율 설정
     }
@@ -134,14 +134,16 @@ public class Monster_Slime_Ctrl : Charactor, IMonster, ISerch, IMove, IAttack, I
 
         if (dis > 2.0f)
         {
-            this.transform.position =
-                Vector3.MoveTowards(this.transform.position, target_Tr.position, this.move_Speed);
+            navMeshAgent.SetDestination(target_Tr.position);
+            //this.transform.position =
+            //    Vector3.MoveTowards(this.transform.position, target_Tr.position, this.move_Speed);
 
             cha_Anim.SetBool("serch", true);
             this.cha_Model.transform.LookAt(target_Tr);
         }
         else
         {
+            navMeshAgent.ResetPath();
             cha_Anim.SetBool("serch", false);
             chaMode = ChaMode.Attack;
         }
@@ -244,7 +246,7 @@ public class Monster_Slime_Ctrl : Charactor, IMonster, ISerch, IMove, IAttack, I
         this.target_Tr = null;
 
         monster_Coll.enabled = false;
-        navMeshAgent.radius = 0.0f;
+        //navMeshAgent.radius = 0.0f;
 
         Sound_Ctrl.Inst.SfSoundPlay("Drop", "Ui");
 
@@ -277,9 +279,8 @@ public class Monster_Slime_Ctrl : Charactor, IMonster, ISerch, IMove, IAttack, I
         target_Tr = null;
         cha_Anim.SetBool("serch", false);
         this.cha_Model.transform.rotation = Quaternion.identity;
-
-        for (int ii = 0; ii < hp_Max.Length; ii++)
-            hp_Now[ii] = hp_Max[ii];
+        navMeshAgent.ResetPath();
+        hp_Now = (float[])hp_Max.Clone();
 
         cha_Ui.HpUpdate(hp_Max, hp_Now);
     }
